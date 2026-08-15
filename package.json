@@ -1,0 +1,27 @@
+{
+  "name": "web-browse-plugin",
+  "version": "0.1.0",
+  "description": "Headless Chromium browser tool for DeepSeek Harness — web browsing, search, and scraping",
+  "type": "module",
+  "main": "web-browse.mjs",
+  "bin": {
+    "web-browse": "./web-browse.mjs"
+  },
+  "scripts": {
+    "install:browser": "npx playwright install chromium",
+    "test": "node web-browse.mjs 'https://httpbin.org/get?q=test' --max-text 2000"
+  },
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "web-browse",
+    "playwright",
+    "headless-browser",
+    "agent-tool",
+    "web-scraping"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "playwright": "^1.52.0"
+  }
+}
