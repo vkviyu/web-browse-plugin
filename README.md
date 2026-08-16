@@ -46,7 +46,9 @@ node web-browse.mjs "https://www.bing.com/search?q=deepseek+harness"
 
 ## Usage
 
-### CLI
+### `web_browse` — URL browsing
+
+**CLI**
 
 ```bash
 # Basic browse
@@ -67,6 +69,46 @@ node web-browse.mjs "https://example.com" --screenshot
 # Plain text output (no JSON wrapper)
 node web-browse.mjs "https://example.com" --text
 ```
+
+### `playwright_run` — Execute arbitrary Playwright scripts
+
+> **This is the POWER tool.** Instead of calling individual MCP-style operations (navigate, click, getText…) with round-trips for each, write real JavaScript that drives the browser directly — loops, conditions, parallel pages, all in ONE call.
+
+```bash
+# Simple: get a page title
+node playwright-run.mjs -e '
+  const browser = await launch(chromium, { headless: true });
+  const page = await browser.newPage();
+  await page.goto("https://example.com");
+  const title = await page.title();
+  await browser.close();
+  return { title };
+'
+
+# Multi-page scraping — sequential + parallel in ONE call
+node playwright-run.mjs -e '
+  const browser = await launch(chromium, { headless: true });
+  const results = [];
+  for (let i = 1; i <= 5; i++) {
+    const page = await browser.newPage();
+    await page.goto(`https://api.example.com/items?page=${i}`);
+    results.push(await page.evaluate(() => document.body.innerText));
+    await page.close();
+  }
+  await browser.close();
+  return results;
+'
+```
+
+**Available in the script scope:**
+
+| Variable | Description |
+|----------|-------------|
+| `chromium` | Playwright's Chromium browser type |
+| `firefox` | Playwright's Firefox browser type |
+| `webkit` | Playwright's WebKit browser type |
+| `launch(bt, opts)` | Auto-injects Chromium executable path |
+| `findChrome()` | Returns the local Chromium executable path |
 
 ### As a DSH tool
 
@@ -127,6 +169,8 @@ node /path/to/web-browse-plugin/web-browse.mjs "https://www.bing.com/search?q=he
 
 ## Roadmap
 
+- [x] **`web_browse`** — browse URLs, search engines, extract text + links
+- [x] **`playwright_run`** — execute arbitrary Playwright scripts (the POWER tool)
 - [ ] **Crawl mode** — follow links to a configurable depth, collect structured data
 - [ ] **Form interaction** — fill inputs, click buttons, submit forms
 - [ ] **Structured extraction** — define extraction schemas (JSON schema → page data)
